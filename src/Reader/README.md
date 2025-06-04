@@ -56,4 +56,4 @@ Luồng xử lý:
 	Trả về type = image, content = chuỗi ma trận 3x3 dạng numpy
 ### 5.9. _read_mp3(self, file_path)
 	Dùng librosa để load file MP3.
-	Trả về array âm thanh (y) và metadata như độ dài.
+	Trả về type = audio, content = chuỗi ma trận n phần tử dạng numpy
