@@ -7,5 +7,3 @@ pdfplumber
 beautifulsoup4
 librosa
 opencv-python
-
-git remote add upstream https://github.com/mjngxwnj/Final-Project-PCA.git
