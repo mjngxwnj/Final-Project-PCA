@@ -1,95 +1,75 @@
+import os
 import numpy as np
 import pandas as pd
 from src.Vectorizer.vectorizer import FeatureVectorizer
+from src.Reader.reader_agent import DataExpander
+
+
+# Path to the files
+txt_path = os.path.join("data_test_for_reader", "report.txt")
+image_path = os.path.join("data_test_for_reader", "cat.jpg")
+table_path = os.path.join("data_test_for_reader", "data.csv")
 
 
 
-#image samle
-image_sample = np.random.randint(0, 256, size=(64, 64), dtype=np.uint8)
+def main():
+    # 0. Call modules
+    reader = DataExpander()
+    vectorizer = FeatureVectorizer()
 
-#table sample
-table_sample = pd.DataFrame({
-    'Col1': np.random.rand(10),
-    'Col2': np.random.rand(10),
-    'Col3': np.random.rand(10)
-})
+    # 1. Read files
+    text_data = reader.expand(txt_path)
+    image_data = reader.expand(image_path)
+    table_data = reader.expand(table_path)
 
-# text sample
-text_sample = """This is a sample text. It contains multiple sentences. Each sentence will be tokenized.\
-                    This is another sentence.\
-                    This is the last sentence. \
-                    This is a sample text for vectorization."""
+    # 2. Vectorize data
+    text_vector = vectorizer.vectorize(text_data)
+    image_vector = vectorizer.vectorize(image_data)
+    table_vector = vectorizer.vectorize(table_data)
 
-data_info_1 = {
-    'type': 'text',
-    'content': text_sample,
-    'metadata': {}
-}
+    # 3. Print results
+    print("text after vectorization: \n", text_vector)
+    print("image after vectorization:", image_vector)
+    print("table after vectorization: \n", table_vector)
 
-data_info_2 = {
-    'type': 'image',
-    'content': image_sample,
-    'metadata': {}
-}
-
-data_info_3 = {
-    'type': 'table',
-    'content': table_sample,
-    'metadata': {}
-}
-
-
-
-vectorizer_1 = FeatureVectorizer(data_info_1).vectorize()
-vectorizer_2 = FeatureVectorizer(data_info_2).vectorize()
-vectorizer_3 = FeatureVectorizer(data_info_3).vectorize()
-
-print(f"text after vectorization: {vectorizer_1}")
-print(f"image after vectorization: {vectorizer_2}")
-print(f"table after vectorization: {vectorizer_3}")
+if __name__ == "__main__":
+    main()
 
 
 # Output
 """
 text after vectorization: 
-[[0.         0.         0.08109302 0.         0.21972246 0.21972246
-  0.         0.         0.         0.         0.         0.
-  0.         0.         0.         0.         0.21972246 0.
-  0.08109302]
- [0.         0.         0.         0.44793987 0.         0.
-  0.44793987 0.         0.44793987 0.44793987 0.         0.
-  0.         0.         0.         0.         0.         0.
-  0.        ]
- [0.13862944 0.         0.         0.         0.         0.
-  0.         0.35835189 0.         0.         0.35835189 0.
-  0.35835189 0.         0.         0.         0.         0.35835189
-  0.        ]
- [0.1732868  0.         0.10136628 0.         0.         0.
-  0.         0.         0.         0.         0.         0.
-  0.         0.         0.         0.44793987 0.         0.
-  0.10136628]
- [0.13862944 0.35835189 0.08109302 0.         0.         0.
-  0.         0.         0.         0.         0.         0.
-  0.         0.         0.35835189 0.         0.         0.
-  0.08109302]
- [0.         0.         0.05792359 0.         0.15694461 0.15694461
-  0.         0.         0.         0.         0.         0.25596564
-  0.         0.25596564 0.         0.         0.15694461 0.
-  0.05792359]]
-
-image after vectorization: [180.   3. 132. ... 186. 184.  74.]
-
-table after vectorization: 
-[[0.40958321 1.         0.57221585]
- [1.         0.         1.        ]
- [0.43602945 0.81065966 0.35661498]
- [0.5294588  0.85135712 0.28451989]
- [0.86907137 0.39351025 0.97602873]
- [0.33602462 0.51466692 0.63705656]
- [0.24204313 0.76895405 0.        ]
- [0.63363129 0.64288431 0.12198617]
- [0.17424785 0.43491333 0.49546231]
- [0.         0.63450677 0.47280603]]
+ [[0.         0.         0.         ... 0.         0.         0.        ]
+ [0.01455649 0.         0.         ... 0.         0.         0.        ] 
+ [0.02375427 0.         0.         ... 0.         0.         0.        ] 
+ ...
+ [0.         0.         0.         ... 0.         0.         0.        ] 
+ [0.01162171 0.         0.         ... 0.         0.         0.        ] 
+ [0.         0.         0.         ... 0.         0.         0.        ]]
+table after vectorization:
+ [[0.         0.         0.         0.        ]
+ [0.18181818 0.03225806 0.5        0.0248911 ]
+ [0.27272727 0.09677419 1.         0.04667082]
+ [0.18181818 0.03225806 0.15       0.06036092]
+ [0.18181818 0.03225806 1.         0.0746733 ]
+ [0.45454545 0.22580645 1.         0.08867455]
+ [0.27272727 0.09677419 0.5        0.07156192]
+ [0.45454545 0.22580645 1.         0.10267579]
+ [0.63636364 0.22580645 0.75       0.14779091]
+ [0.63636364 0.48387097 1.         0.25668948]
+ [0.63636364 0.22580645 0.75       0.26913503]
+ [0.63636364 0.22580645 0.55       0.3282514 ]
+ [0.63636364 0.48387097 0.75       0.36714375]
+ [0.63636364 0.22580645 0.75       0.34038581]
+ [0.63636364 0.22580645 0.75       0.42470442]
+ [1.         0.22580645 1.         0.44026136]
+ [1.         0.48387097 0.75       0.53329185]
+ [0.63636364 0.48387097 0.15       0.54449284]
+ [0.63636364 0.48387097 0.15       0.5955196 ]
+ [0.63636364 0.48387097 0.9        0.65805849]
+ [1.         0.48387097 0.75       0.65805849]
+ [1.         0.48387097 1.         0.86963286]
+ [1.         1.         1.         0.87554449]
+ [1.         1.         0.7        1.        ]]
 
 """
-

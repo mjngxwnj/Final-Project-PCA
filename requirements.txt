@@ -10,3 +10,4 @@ opencv-python
 lxml
 PyMuPDF
 soundfile
+opencv-python

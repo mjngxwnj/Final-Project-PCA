@@ -8,23 +8,8 @@ class FeatureVectorizer:
     A class to vectorize text, arrays, dataframes to a feature vector.
     """
 
-    def __init__(self, data_info: dict):
-        """
-        Initialize the FeatureVectorizer with data information.
-
-        Params:
-            data_info (dict): A dict containing information about the data (type, content, metadata).
-        """
-
-        # Check params
-        if not isinstance(data_info, dict):
-            raise TypeError("data_info must be a dict.")
-        
-        if not all(key in data_info for key in ['type', 'content', 'metadata']):
-            raise ValueError("data_info must contain 'type', 'content', and 'metadata' keys.")
-        
-        # add attributes
-        self._data_info = data_info
+    def __init__(self):
+        pass
 
 
     def _text_vectorizer(self, text: str) -> np.ndarray:
@@ -34,7 +19,7 @@ class FeatureVectorizer:
         Returns:
             np.ndarray: An array representing the feature vector of the text data.
         """
-        return TfidfVectorizer(text).implement()
+        return TfidfVectorizer().transform(text)
 
 
     def _image_vectorizer(self, image_matrix: np.ndarray) -> np.ndarray:
@@ -50,7 +35,7 @@ class FeatureVectorizer:
             raise TypeError("image_matrix must be a numpy array.")
         
         if image_matrix.shape != (64, 64):
-            raise ValueError("image_matrix must be of shape (64, 640.)")
+            raise ValueError("image_matrix must be of shape (64, 64).")
         
         flat_array = np.zeros((4096,))
 
@@ -85,9 +70,9 @@ class FeatureVectorizer:
         normalized_data = (array_data - min_values) / (max_values - min_values)
 
         return normalized_data
-
-
-    def vectorize(self) -> np.ndarray:
+    
+    
+    def vectorize(self, data_info: dict) -> np.ndarray:
         """
         Vectorize the data based on its type.
         
@@ -96,12 +81,19 @@ class FeatureVectorizer:
         """
 
         # Check params
-        if self._data_info['type'] not in ['text', 'image', 'table']:
+        if not isinstance(data_info, dict):
+            raise TypeError("data_info must be a dict.")
+        
+        if not all(key in data_info for key in ['type', 'content', 'meta']):
+            raise ValueError("data_info must contain 'type', 'content', and 'meta' keys.")
+
+        # Check params
+        if data_info['type'] not in ['text', 'image', 'table']:
             raise ValueError("data_type must be one of 'text', 'image', 'table'.")
         
-        data_type = self._data_info['type']
-        content   = self._data_info['content']
-        metadata  = self._data_info['metadata']
+        data_type = data_info['type']
+        content   = data_info['content']
+        metadata  = data_info['meta']
 
         if data_type == 'text':
             return self._text_vectorizer(content)
