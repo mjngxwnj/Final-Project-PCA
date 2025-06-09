@@ -7,3 +7,7 @@ pdfplumber
 beautifulsoup4
 librosa
 opencv-python
+lxml
+PyMuPDF
+soundfile
+opencv-python
