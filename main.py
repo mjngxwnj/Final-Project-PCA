@@ -8,7 +8,7 @@ from evaluate_error_module import explained_variance
 import numpy as np
 
 def main():
-    path = ""
+    path = "/Users/letuanminhthanh/Desktop/PCA-Project/Final-Project-PCA/Test-file/file.txt"
     
     # 1. read data
     data = DataExpander().expand(path)
