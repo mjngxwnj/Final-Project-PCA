@@ -36,6 +36,8 @@ def main():
     print("table after vectorization: \n", table_vector)
     #print("pdf after vectorization: \n", pdf_vector)
 
+
+
 if __name__ == "__main__":
     main()
 
