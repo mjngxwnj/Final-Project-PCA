@@ -11,19 +11,26 @@ class TfidfVectorizer:
     A class to represent a TF-IDF vectorizer.
     """
 
-    def __init__(self, text: str):
+    def __init__(self):
+        pass
+
+
+    def _split_sentences(self, text: str) -> None:
         """
-        Initialize the TfidfVectorizer with text data.
+        Split the text into sentences.
 
         Args:
-            text (str): The text to be vectorized.
+            text (str): The input text to be split into sentences.
+        
+        Returns:
+            list: A list of sentences.
         """
 
         # Cut text into sentences
-        self._sentences = sent_tokenize(text)
+        return sent_tokenize(text)
 
 
-    def _preprocess_text(self) -> Tuple[list, set, dict, dict, int]:
+    def _preprocess_text(self, sentences_list: list) -> Tuple[list, set, dict, dict, int]:
         """
         Preprocess the text:
             - Convert to lowercase.
@@ -40,7 +47,7 @@ class TfidfVectorizer:
         sentences = []
         word_set = []
         
-        for sent in self._sentences:
+        for sent in sentences_list:
             words = [word.lower() for word in word_tokenize(sent) if word.isalpha()]
             sentences.append(words)
             for word in words:
@@ -131,7 +138,7 @@ class TfidfVectorizer:
         return tf_idf_vec
     
 
-    def implement(self) -> np.ndarray:
+    def transform(self, text: str) -> np.ndarray:
         """
         Implement the TF-IDF vectorization process.
 
@@ -139,10 +146,16 @@ class TfidfVectorizer:
             np.array: The TF-IDF vector for the text.
         """
 
+        #Split text into sentences
+        sentences_list = self._split_sentences(text)
+
+        # Preprocess text and calculate TF-IDF vectors
         vectors = []
-        sentences, word_set, word_count, word_dict, total_documents = self._preprocess_text()
+        sentences, word_set, word_count, word_dict, total_documents = self._preprocess_text(sentences_list)
+
         for sentence in sentences:
             tf_idf_vec = self._tf_idf(sentence, word_set, word_count, word_dict, total_documents)
             vectors.append(tf_idf_vec)
         
         return np.array(vectors)
+    
