@@ -1,0 +1,31 @@
+Chúng ta có một số vấn đề ở phần số hoá cho dữ liệu dạng “text” như sau: 
+Thứ nhất file text (đoạn text trong file bất kì) không có cấu trúc hoặc ngữ cảnh rõ ràng nên việc số hoá gặp nhiều khó khắn trong việc diễn giải chúng có nghĩa để phù hợp với đầu vào PCA. Output sau khi số hoá phải có dạng (samples, num_features). Vì mỗi feature phải mang ý nghĩa thống kê nhất định, bởi PCA sẽ tìm các trục (principal components) tối đa hóa phương sai trong không gian này. Đó cũng chính là nhược điểm khá lớn của PCA trong việc giảm chiều dữ liệu (phi cấu trúc).
+Thì ở đây chúng ta có một số cách sau để số hoá text bất kì, và mỗi cách có ưu - nhược điểm riêng và có phần test với dữ liệu cấu trúc rõ ràng và dữ liệu không có cấu trúc và ngữ cảnh,… 
+
+Cách thứ 1: 
+Tokenize bằng cách mapping từ từ với số thứ tự nó trong text ban đầu. Sau đó chọn maxlen để bắt đầu tách lấy samples với maxlen được chọn. và được shape (num_samples, maxlen). 
+
+Cách này thì đơn giản và ít tốn ko gian lưu trữ tính toán và dễ dàng reconstruct text. Tuy nhiêu mắc một vấn đề là không có tính giải thích khi feature là maxlen thì với mỗi cột feature đầu vào không có nghĩa đối với PCA, nên việc tìm các trục khó giải thích.
+ví dụ: …
+
+(22, 32)
+(0.013080120139618071+0j)
+80.41609772097631
+
+Cách thứ 2:
+Ứng dụng tfidf (manual) để tokenize nhưng có sự biến đổi trong khâu đầu ra như sau: Đầu tiên chia text ra thành list string với mỗi phần là 1 đoạn (một câu). Sau đó dùng công thức tính TF-IDF[i] = TF * IDF. được shape (num_voca,). Sau đó đưa nó về dạng (num_Sentences (hoặc num_lines), num_voca). 
+
+Với cách này thì feature có ý nghĩa với PCA. Tuy nhiên không gian lưu trữ và tính toán rất lớn. Và đối với dữ liệu phi cấu trúc hoặc như đoạn code thì việc chia text bằng câu hoặc dòng là rất khó có ý nghĩa dẫn đến công thức tf-idf không hợp lý. 
+
+ví dụ: … 
+
+
+Cách thứ 3: Chunked TF-IDF mean pooling
+Chia văn bản thành các đoạn nhỏ hơn (chunk) cố định theo số từ (chứ không chia theo câu hay dòng).
+Áp dụng TF-IDF cho toàn bộ văn bản (hoặc tập văn bản) để có ma trận (num_chunks, vocab_size).
+Thực hiện mean pooling hoặc max pooling trên các chunk để đưa về num_features hợp lý.
+Đầu ra là ma trận (num_chunks, vocab_size) hoặc (num_samples, num_features).
+
+Và ưu điểm pp này là các feature có ý nghĩa thống kê, và dữ liệu không cần ngữ cảnh rõ ràng. Tuy nhiên vì kết hợp tfidf nên kích thước vocab lớn 
+ 
+Ví dụ ...
