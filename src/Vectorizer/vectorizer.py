@@ -26,7 +26,7 @@ class FeatureVectorizer:
     def _image_vectorizer(self, image_matrix: np.ndarray) -> np.ndarray:
         """
         Vectorize image data into a feature vector.
-        
+ 
         Returns:
             np.ndarray: An array representing the feature vector of the image data.
         """
@@ -102,7 +102,7 @@ class FeatureVectorizer:
         return normalized_data
     
     
-    def vectorize(self, data_info: dict) -> np.ndarray:
+    def vectorize(self, list_data: list) -> np.ndarray:
         """
         Vectorize the data based on its type.
         
@@ -111,44 +111,36 @@ class FeatureVectorizer:
         """
 
         # Check params
-        if not isinstance(data_info, dict):
-            raise TypeError("data_info must be a dict.")
-        
-        if not all(key in data_info for key in ['type', 'content', 'meta']):
-            raise ValueError("data_info must contain 'type', 'content', and 'meta' keys.")
+        if not isinstance(list_data, list):
+            raise TypeError("list_data must be a list.")
+  
+        # create vector to store all vectorized data
+        vectorized_vector = []
+            
+        for data in list_data:    
+            if not all(key in data for key in ['type', 'content', 'meta']):
+                raise ValueError("list_data must contain 'type', 'content', and 'meta' keys.")
 
-        # Check params
-        if data_info['type'] not in ['multiple', 'text', 'image', 'table']:
-            raise ValueError("data_type must be one of 'text', 'image', 'table'.")
-        
-        data_type = data_info['type']
-        content   = data_info['content']
-        metadata  = data_info['meta']
-        
-        # Handle different data types
-        if data_type == 'multiple':
-            vectors = []
+            if data['type'] not in ['text', 'image', 'table']:
+                raise ValueError("data_type must be one of 'text', 'image', 'table'.")
+       
+            # If condition to vectorize appropriate data type
+            if data['type'] == 'text':
+                vectorized_vector.append(self._text_vectorizer(data['content']))
             
-            if content['text'] is not None:
-                vectors.append(self._text_vectorizer(content['text']))
-            
-            if content['images'] is not None:
-                for image in content['images']:
-                    vectors.append(self._image_vectorizer(image))
-            
-            if content['tables'] is not None:
-                for table in content['tables']:
-                    vectors.append(self._table_vectorizer(table))
-            
-            return vectors
+            elif data['type'] == 'image':
+                vectorized_vector.append(self._image_vectorizer(data['content']))
+
+            else: 
+                vectorized_vector.append(self._table_vectorizer(data['content']))
+
         
-        # Handle text data type
-        elif data_type == 'text':
-            return self._text_vectorizer(content)
-        
-        # Handle image data type
-        elif data_type == 'image':
-            return self._image_vectorizer(content)
-        
-        # Handle table data type
-        else: return self._table_vectorizer(content)
+        return vectorized_vector
+
+
+
+
+
+
+
+
