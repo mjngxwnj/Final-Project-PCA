@@ -24,7 +24,7 @@ def auto_select_maxlen(text: str, maxlen_candidates: List[int] = [32, 64, 128, 2
 
     return best_maxlen
 
- 
+
 class ManualTokenizer:
     def __init__(self, maxlen: int = 512, scale: str = "minmax"):
         self.maxlen = maxlen
