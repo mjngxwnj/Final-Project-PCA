@@ -158,3 +158,4 @@ class TfidfVectorizer:
             vectors.append(tf_idf_vec)
         
         return np.array(vectors)
+    
