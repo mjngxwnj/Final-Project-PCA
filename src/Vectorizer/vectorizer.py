@@ -38,7 +38,10 @@ class FeatureVectorizer:
         # if image_matrix.shape != (64, 64):
         #     raise ValueError("image_matrix must be of shape (64, 64).")
 
-        row, col = image_matrix.shape
+        # Convert image to grayscale matrix
+        gray_image_matrix = cv2.cvtColor(image_matrix, cv2.COLOR_BGR2GRAY)
+    
+        row, col = gray_image_matrix.shape
 
         flat_array = np.zeros((row * col,))
 
@@ -46,7 +49,7 @@ class FeatureVectorizer:
 
         for i in range(row):
             for j in range(col):
-                flat_array[idx] = image_matrix[i][j]
+                flat_array[idx] = gray_image_matrix[i][j]
                 idx += 1
             
         return flat_array      # shape (row * col,)

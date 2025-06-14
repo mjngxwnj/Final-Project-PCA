@@ -303,7 +303,7 @@ class DataExpander:
             with open(file_path, 'r', encoding='utf-8') as f:
                 data = json.load(f)
             return [{
-                "type": "json",
+                "type": "table",
                 "content": pd.DataFrame(data),
                 "meta": { 
                     "original_filename": os.path.basename(file_path) 
