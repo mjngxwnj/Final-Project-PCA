@@ -11,7 +11,7 @@ import time
 # Nice main
 def main():
     t1 = time.time()
-    log_path = "log_mp3.txt" # Change path name to save the log file accordingly
+    log_path = "log_xlsx.txt" # Change path name to save the log file accordingly
 
     with open(log_path, "w", encoding="utf-8") as log_file:
         total_error = 0
@@ -19,7 +19,7 @@ def main():
         num_files = 5
 
         for file_idx in range(1, num_files + 1):
-            path = f"./Source/Test_Data/mp3/file{file_idx}.mp3" # Adjust the path as needed
+            path = f"./Source/Test_Data/xlsx/file{file_idx}.xlsx" # Adjust the path as needed
             data = DataExpander().expand(path)
 
             file_explained_var_sum = 0
