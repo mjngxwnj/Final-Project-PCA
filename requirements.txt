@@ -1,3 +1,4 @@
+# This is all the libraries you need to pip install if you want to run the project
 nltk
 numpy
 pandas
@@ -15,5 +16,4 @@ matplotlib
 json
 docx
 opencv-python
-
 # And anther libs

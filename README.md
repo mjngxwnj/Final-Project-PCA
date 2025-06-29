@@ -12,8 +12,13 @@ Cách chạy CODE:
 1. CÁCH 1:
 Tạo một thư mục trong máy và clone từ github sau về: https://github.com/mjngxwnj/Final-Project-PCA 
 Sau đó trong terminal cd để tên thư mục đã tạo trên. Ví dụ tạo thư mục PCA_Nhom3 thì dùng lệnh cd PCA_Nhom3
+Sau đó pip install các thư viên cần thiết (như đọc file là bất khả kháng)
 Và cuối cùng chạy file main_for_teacher.py
 
 
 2. CÁCH 2:
-Nếu không dùng cách clone thì ta phải chỉnh lại đường dẫn đọc file ở trong file main_for_teacher.py rồi chạy
+
+Nếu không dùng cách clone thì ta phải chỉnh lại đường dẫn đọc file ở trong file main_for_teacher.py 
+Sau đó pip install các thư viên cần thiết (như đọc file là bất khả kháng)
+Cuối cùng chạy file main_for_teacher.py 
+
