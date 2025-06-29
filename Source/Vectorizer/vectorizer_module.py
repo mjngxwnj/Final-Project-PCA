@@ -312,7 +312,7 @@ class FeatureVectorizer:
         all_parts = numeric_data + bool_data + date_data + categorical_data + tfidf_data
         vector = np.hstack(all_parts) if all_parts else np.empty((len(df), 0))
 
-        return vector, meta
+        return vector
 
 
     def _audio_vectorizer(self, audio_data: np.ndarray,
