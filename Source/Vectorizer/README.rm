@@ -37,19 +37,20 @@ Ví dụ ...
 (6.508544049452301e-06+0j)
 86.3274845550041
 
-
 Tiếp theo là images:
-Đơn giản chỉ là đưa về dạng gray scale (n, m)
+Đơn giản chỉ là đưa về dạng gray scale (n, m) và chuẩn hoá.
 
 Tiếp theo là table (DataFrame)
 Hàm table_vectorizer chuyển đổi DataFrame thành ma trận vector số bằng cách tự động nhận diện kiểu dữ liệu từng cột:
 số, boolean, ngày giờ, văn bản ngắn (categorical), văn bản dài (TF-IDF), đồng thời chuẩn hóa giá trị và loại bỏ các cột chứa liên kết.
-
-Hàm cũng xử lý header giả nếu có, đi kèm metadata mô tả kiểu đặc trưng từng cột và các cột bị bỏ qua.
+Hàm cũng xử lý header giả nếu có, đi kèm metadata mô tả kiểu đặc trưng từng cột và các cột bị bỏ qua. Có chuẩn hoá dữ liệu.
 
 Nói tóm gọn là vậy
 
-Cuối cùng là audio 
+Cuối cùng là audio: đầu tiên chuyển đổi tín hiệu âm thanh 1 chiều thành ma trận đặc trưng 2 chiều 
+bằng cách chia tín hiệu thành các frame chồng lắp nhau theo frame_length và hop_length.
+Trước khi chia frame, dữ liệu được chuẩn hóa về khoảng [0, 1].
+Kết quả là ma trận có shape (num_frames, frame_length)
 ...
 
 
