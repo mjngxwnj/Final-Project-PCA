@@ -12,4 +12,8 @@ PyMuPDF
 soundfile
 opencv-python
 matplotlib
-librosa
+json
+docx
+opencv-python
+
+# And anther libs

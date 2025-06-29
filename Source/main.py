@@ -11,7 +11,7 @@ import time
 # Nice main
 def main():
     t1 = time.time()
-    log_path = "log_csv.txt" # Change path name to save the log file accordingly
+    log_path = "log_test.txt" # Change path name to save the log file accordingly
 
     with open(log_path, "w", encoding="utf-8") as log_file:
         total_error = 0
@@ -19,7 +19,7 @@ def main():
         num_files = 5
 
         for file_idx in range(1, num_files + 1):
-            path = f"./Source/Test_Data/csv/file{file_idx}.csv" # Adjust the path as needed
+            path = f"./Source/Test_Data/xlsx/file{file_idx}.xlsx" # Adjust the path as needed
             data = DataExpander().expand(path)
             file_explained_var_sum = 0
             valid_vector_count = 0
