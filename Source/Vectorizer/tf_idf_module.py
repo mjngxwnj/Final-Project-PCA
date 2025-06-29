@@ -108,10 +108,9 @@ class TfidfVectorizer:
 
     #     return np.array(vectors)
 
-
     def transform(self, text: str) -> np.ndarray:
         """
-        Transform a single document into a 1D TF-IDF vector.
+        Transform a single document into a normalized 1D TF-IDF vector.
         """
         if not self.is_fitted:
             raise RuntimeError("TfidfVectorizer must be fitted before calling transform().")
@@ -119,7 +118,16 @@ class TfidfVectorizer:
         if not isinstance(text, str):
             text = str(text)
 
-        # Không chia câu — xử lý toàn bộ văn bản
         words = [word.lower() for word in word_tokenize(text) if word.isalpha()]
         tf_idf_vec = self._tf_idf(words)
+
+        min_val = np.min(tf_idf_vec)
+        max_val = np.max(tf_idf_vec)
+        range_val = max_val - min_val
+
+        if range_val > 0:
+            tf_idf_vec = (tf_idf_vec - min_val) / range_val
+        else:
+            tf_idf_vec = np.zeros_like(tf_idf_vec)
+
         return tf_idf_vec  # shape (n_vocab,)

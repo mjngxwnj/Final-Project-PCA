@@ -155,9 +155,9 @@ class FeatureVectorizer:
         return gray_image_matrix  # Shape (H, W), float32, values in [0, 1]
 
 
-    def _standard_scaler(self, series: pd.Series) -> pd.Series:
+    def _minmax_scaler(self, series: pd.Series) -> pd.Series:
         """
-        Apply standard scaling to a numeric Series.
+        Apply min-max scaling to a numeric Series to [0, 1].
 
         Args:
             series (pd.Series): The numeric column to scale.
@@ -165,19 +165,21 @@ class FeatureVectorizer:
         Returns:
             pd.Series: The scaled column.
         """
-
-        # Check param
         if not isinstance(series, pd.Series):
             raise TypeError("Input must be a pandas Series.")
 
         if not pd.api.types.is_numeric_dtype(series):
             raise TypeError("Series must be of numeric dtype.")
 
-        # Calculate mean & std
-        mean = series.mean()
-        std = series.std()
+        min_val = series.min()
+        max_val = series.max()
+        range_val = max_val - min_val
 
-        return (series - mean) / std if std != 0 else series
+        if range_val == 0:
+            return pd.Series([0.0] * len(series), index=series.index)
+        else:
+            return (series - min_val) / range_val
+
     
     def _extract_header_if_exists(self, df: pd.DataFrame) -> tuple[pd.DataFrame, dict]:
         """
@@ -224,7 +226,7 @@ class FeatureVectorizer:
     def _is_link_like(self, s: str) -> bool:
         s = str(s).lower()
         return any(p in s for p in ['http', 'www.', '.com', '.org', '.net'])
-
+    
     def _table_vectorizer(self, table_data: pd.DataFrame, length_threshold: int = 15) -> tuple[np.ndarray, dict]:
         if not isinstance(table_data, pd.DataFrame):
             raise TypeError("table_data must be a pandas DataFrame.")
@@ -249,7 +251,7 @@ class FeatureVectorizer:
             is_strict_numeric = pd.api.types.is_numeric_dtype(series) and not series.astype(str).str.contains('[a-zA-Z]', na=False).any()
 
             if is_strict_numeric:
-                series = self._standard_scaler(series)
+                series = self._minmax_scaler(series)
                 numeric_data.append(series.to_numpy().reshape(-1, 1))
                 meta['col_feature_types'][col] = 'numeric'
 
@@ -263,7 +265,7 @@ class FeatureVectorizer:
                 try:
                     dt_series = pd.to_datetime(series, errors='raise')
                     ts = dt_series.astype('int64') // 10**9
-                    ts = self._standard_scaler(ts)
+                    ts = self._minmax_scaler(ts)
                     date_data.append(ts.to_numpy().reshape(-1, 1))
                     meta['col_feature_types'][col] = 'datetime'
                     continue
@@ -286,7 +288,7 @@ class FeatureVectorizer:
                 if n_unique <= 30 and avg_length <= length_threshold:
                     unique_vals = list(text_series.unique())
                     encoded = text_series.apply(lambda x: unique_vals.index(x) if x in unique_vals else -1)
-                    encoded = self._standard_scaler(encoded)
+                    encoded = self._minmax_scaler(encoded)
                     categorical_data.append(encoded.to_numpy().reshape(-1, 1))
                     meta['col_feature_types'][col] = 'categorical'
 
@@ -303,18 +305,19 @@ class FeatureVectorizer:
                 else:
                     unique_vals = list(text_series.unique())
                     encoded = text_series.apply(lambda x: unique_vals.index(x) if x in unique_vals else -1)
-                    encoded = self._standard_scaler(encoded)
+                    encoded = self._minmax_scaler(encoded)
                     categorical_data.append(encoded.to_numpy().reshape(-1, 1))
                     meta['col_feature_types'][col] = 'categorical_simple'
 
         all_parts = numeric_data + bool_data + date_data + categorical_data + tfidf_data
         vector = np.hstack(all_parts) if all_parts else np.empty((len(df), 0))
 
-        return vector
+        return vector, meta
+
 
     def _audio_vectorizer(self, audio_data: np.ndarray,
-                          frame_length: int = 2048, 
-                          hop_length: int = 512) -> np.ndarray:
+                        frame_length: int = 2048, 
+                        hop_length: int = 512) -> np.ndarray:
         """
         Vectorize audio data into a 2D feature matrix by splitting audio_data into frames.
 
@@ -324,17 +327,28 @@ class FeatureVectorizer:
             audio_data (np.ndarray): 1D waveform array.
 
         Returns:
-            np.ndarray: 
+            np.ndarray: Frame matrix (num_frames, frame_length), scaled.
         """
 
         # Check params
         if not isinstance(audio_data, np.ndarray):
             raise TypeError("audio_data must be a np.ndarray.")
 
+        # Convert to float32
+        audio_data = audio_data.astype(np.float32)
+
+        min_val = np.min(audio_data)
+        max_val = np.max(audio_data)
+        range_val = max_val - min_val
+        if range_val > 0:
+            audio_data = (audio_data - min_val) / range_val
+
+
         # Create frames
-        frames = librosa.util.frame(audio_data, frame_length = frame_length, hop_length = hop_length).T
+        frames = librosa.util.frame(audio_data, frame_length=frame_length, hop_length=hop_length).T
 
         return frames
+
 
     def vectorize(self, list_data: list) -> np.ndarray:
         """
